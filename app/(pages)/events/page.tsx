@@ -1,7 +1,8 @@
 'use client'
 // Import necessary modules
-import Axios, { AxiosPrivate } from '@/app/api/axios'
+import Axios from '@/app/api/axios'
 import { useEffect, useState } from 'react'
+import useAxiosPrivate from '@/app/hooks/useAxiosPrivate'
 
 // Define the interface for the Event object
 interface Event {
@@ -14,23 +15,16 @@ interface Event {
     event_status: boolean
 }
 
-interface Ticket {
-    ticket_type: string
-    price: number
-    availability: number
-}
-
-const YourEvents = () => {
+const Events = () => {
     // Initialize events state with an empty array
     const [events, setEvents] = useState<Event[]>([])
-    const [ticket, setTicket] = useState<Ticket[]>([])
     // const axios = useAxiosPrivate()
     useEffect(() => {
         // Define an async function to fetch events data
         const fetchEvents = async () => {
             try {
                 // Send a GET request to fetch events data from the server
-                const response = await AxiosPrivate.get('/userevents')
+                const response = await Axios.get('/events')
                 // Update the events state with the fetched data
                 setEvents(response.data.data)
             } catch (error) {
@@ -40,21 +34,14 @@ const YourEvents = () => {
 
         // Call the fetchEvents function when the component mounts
         fetchEvents()
-    }, [])
-
-    const handleTicket = async (event_id: string) => {
-        const res = await Axios.get('/get_ticket/' + event_id)
-        setTicket(res.data)
-        console.log(ticket)
-    } // Provide an empty dependency array to run the effect only once when the component mounts
+    }, []) // Provide an empty dependency array to run the effect only once when the component mounts
 
     return (
         <section className="container mx-auto px-4">
             <h1 className="mb-8 text-3xl font-bold">Your Events</h1>
             {/* Map over the events array to render each event */}
             {events.map((event) => (
-                <button
-                    onClick={() => handleTicket(event.event_id)}
+                <div
                     key={event.event_id}
                     className="mb-4 rounded bg-gray-100 p-4 shadow"
                 >
@@ -71,14 +58,14 @@ const YourEvents = () => {
                         {event.event_description || 'No description available'}
                     </p>
                     <p
-                        className={`text-sm font-bold ${!event.event_status ? 'text-green-600' : 'text-red-600'}`}
+                        className={`text-sm font-bold ${event.event_status ? 'text-green-600' : 'text-red-600'}`}
                     >
-                        {!event.event_status ? 'Active' : 'Inactive'}
+                        {event.event_status ? 'Active' : 'Inactive'}
                     </p>
-                </button>
+                </div>
             ))}
         </section>
     )
 }
 
-export default YourEvents
+export default Events

@@ -1,5 +1,11 @@
 'use client'
-import React, { createContext, useState } from 'react'
+import React, {
+    createContext,
+    useState,
+    ReactNode,
+    Dispatch,
+    SetStateAction,
+} from 'react'
 
 interface User {
     username: string
@@ -9,20 +15,32 @@ interface User {
     phone_number: string
 }
 
-interface AuthContextType {
-    auth: Auth | null
-    setAuth: React.Dispatch<React.SetStateAction<Auth | null>>
-}
-
-interface Auth {
+export interface Auth {
     user: User | null
     access_token: string | null
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+export interface AuthContextType {
+    auth: Auth | null
+    setAuth: Dispatch<SetStateAction<Auth>>
+}
 
-export const AuthProvider: React.FC = ({ children }) => {
-    const [auth, setAuth] = useState<Auth | null>(null)
+const initialAuthState: Auth = {
+    user: null,
+    access_token: null,
+}
+
+export const AuthContext = createContext<AuthContextType>({
+    auth: initialAuthState,
+    setAuth: () => {},
+})
+
+interface AuthProviderProps {
+    children: ReactNode
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+    const [auth, setAuth] = useState<Auth>(initialAuthState)
 
     return (
         <AuthContext.Provider value={{ auth, setAuth }}>
@@ -30,5 +48,3 @@ export const AuthProvider: React.FC = ({ children }) => {
         </AuthContext.Provider>
     )
 }
-
-export default AuthContext

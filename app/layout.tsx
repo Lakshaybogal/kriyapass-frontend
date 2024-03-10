@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from './context/AuthProvider'
+import Navbar from './component/Navbar'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -11,13 +12,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
     children,
-}: Readonly<{
-    children: React.ReactNode
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en">
             <AuthProvider>
-                <body className={inter.className}>{children}</body>
+                <body className={inter.className}>
+                    <Navbar />
+                    {children}
+                </body>
             </AuthProvider>
         </html>
     )

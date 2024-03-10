@@ -4,6 +4,7 @@ import { useState, ChangeEvent, useEffect } from 'react'
 import useAxiosPrivate from './hooks/useAxiosPrivate'
 import useAuthContext from './hooks/useAuthContext'
 import useRefresh from './hooks/useRefresh'
+import Axios from './api/axios'
 
 // Define the type for the user object
 
@@ -19,16 +20,6 @@ export default function Home() {
     const axios = useAxiosPrivate()
     const refresh = useRefresh()
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                await refresh() // Call the refresh function to get the updated token
-            } catch (error) {
-                console.error('Error refreshing token:', error)
-            }
-        }
-        fetchData() // Call the fetchData function inside useEffect
-    }, [])
     // State variables for the login form
     const [loginForm, setLoginForm] = useState<LoginForm>({
         email: '',
@@ -45,7 +36,7 @@ export default function Home() {
     // Function to handle login
     const handleLogin = async () => {
         // Send a POST request to the login endpoint
-        const response = await axios.post('/users/login', loginForm, {
+        const response = await Axios.post('/login', loginForm, {
             withCredentials: true, // Include credentials in the request
         })
         // Update the user context with the logged-in user data
@@ -58,6 +49,20 @@ export default function Home() {
         // Clear the login form fields
         setLoginForm({ email: '', password: '' })
     }
+    const handleLogOut = async () => {
+        // Send a POST request to the login endpoint
+        const response = await Axios.get('/logout', {
+            withCredentials: true, // Include credentials in the request
+        })
+        // Update the user context with the logged-in user data
+        //
+        setAuth({
+            ...auth,
+            access_token: '',
+            user: null,
+        })
+        // Clear the login form fields
+    }
 
     return (
         <main className="flex min-h-screen flex-col items-center p-24">
@@ -68,7 +73,7 @@ export default function Home() {
                     <p>
                         Hello {auth.user.first_name} {auth.user.last_name}!
                     </p>
-                    <button onClick={() => setAuth(null)}>Logout</button>
+                    <button onClick={handleLogOut}>Logout</button>
                 </div>
             ) : (
                 <div className="flex flex-col gap-2">
@@ -91,7 +96,6 @@ export default function Home() {
                     {error && <p>{error}</p>}
                 </div>
             )}
-            <button onClick={() => refresh()}>REfresh</button>
         </main>
     )
 }
