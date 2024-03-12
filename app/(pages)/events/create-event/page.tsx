@@ -69,6 +69,7 @@ const CreateEvent: React.FC = () => {
                         email: auth?.user?.email,
                         event_id: response.data.data.event_id,
                         event_name: response.data.data.event_name,
+                        price: ticketData[i].price,
                         ...ticketData[i],
                     }
                 )

@@ -38,18 +38,18 @@ const Navbar: React.FC = () => {
                         </div>
                         <div className="ml-10 hidden space-x-4 md:flex ">
                             <NavItem href="/" label="Home" />
-                            <NavItem
-                                href="/events/yourevents"
-                                label="Your Events"
-                            />
-                            <NavItem href="/pricing" label="Pricing" />
+                            <NavItem href="/events" label="Events" />
+                            <NavItem href="/bookings" label="Bookings" />
                             <NavItem href="#" label="Disabled" />
                         </div>
                     </div>
                     <div className="hidden md:flex">
                         {auth?.user ? (
                             <>
-                                <NavItem href="/dashboard" label="Dashboard" />
+                                <NavItem
+                                    href="/events/yourevents"
+                                    label="Dashboard"
+                                />
                                 <NavItem
                                     href="/projfile"
                                     label={auth?.user.first_name}

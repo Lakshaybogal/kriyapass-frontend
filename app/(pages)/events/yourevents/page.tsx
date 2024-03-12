@@ -15,15 +15,17 @@ interface Event {
 }
 
 interface Ticket {
+    ticket_id: string
     ticket_type: string
     price: number
     availability: number
+    event_id: string // Added event_id property
 }
 
 const YourEvents = () => {
     // Initialize events state with an empty array
     const [events, setEvents] = useState<Event[]>([])
-    const [ticket, setTicket] = useState<Ticket[]>([])
+    const [tickets, setTickets] = useState<Ticket[]>([])
     // const axios = useAxiosPrivate()
     useEffect(() => {
         // Define an async function to fetch events data
@@ -43,40 +45,58 @@ const YourEvents = () => {
     }, [])
 
     const handleTicket = async (event_id: string) => {
-        const res = await Axios.get('/get_ticket/' + event_id)
-        setTicket(res.data)
-        console.log(ticket)
-    } // Provide an empty dependency array to run the effect only once when the component mounts
+        try {
+            const res = await Axios.get('/get_ticket/' + event_id)
+            setTickets(res.data.data)
+            console.log(res.data) // Log the response data
+        } catch (error) {
+            console.error('Error fetching tickets:', error)
+        }
+    }
 
     return (
-        <section className="container mx-auto px-4">
+        <section className="container mx-auto flex-col px-4">
             <h1 className="mb-8 text-3xl font-bold">Your Events</h1>
-            {/* Map over the events array to render each event */}
-            {events.map((event) => (
-                <button
-                    onClick={() => handleTicket(event.event_id)}
-                    key={event.event_id}
-                    className="mb-4 rounded bg-gray-100 p-4 shadow"
-                >
-                    <h2 className="mb-2 text-xl font-bold">
-                        {event.event_name}
-                    </h2>
-                    <p className="mb-2 text-gray-600">
-                        {new Date(event.event_date).toLocaleDateString()}
-                    </p>
-                    <p className="mb-2 text-gray-600">
-                        {event.event_location || 'No location specified'}
-                    </p>
-                    <p className="mb-2 text-gray-600">
-                        {event.event_description || 'No description available'}
-                    </p>
-                    <p
-                        className={`text-sm font-bold ${!event.event_status ? 'text-green-600' : 'text-red-600'}`}
+
+            <div className="flex flex-col gap-2 px-4">
+                {events.map((event) => (
+                    <button
+                        onClick={() => handleTicket(event.event_id)}
+                        key={event.event_id}
+                        className="mb-4 rounded bg-gray-100 p-4 shadow"
                     >
-                        {!event.event_status ? 'Active' : 'Inactive'}
-                    </p>
-                </button>
-            ))}
+                        <h2 className="mb-2 text-xl font-bold">
+                            {event.event_name}
+                        </h2>
+                        <p className="mb-2 text-gray-600">
+                            {new Date(event.event_date).toLocaleDateString()}
+                        </p>
+                        <p className="mb-2 text-gray-600">
+                            {event.event_location || 'No location specified'}
+                        </p>
+                        <p className="mb-2 text-gray-600">
+                            {event.event_description ||
+                                'No description available'}
+                        </p>
+                        <p
+                            className={`text-sm font-bold ${!event.event_status ? 'text-green-600' : 'text-red-600'}`}
+                        >
+                            {!event.event_status ? 'Active' : 'Inactive'}
+                        </p>
+                        <div className="flex flex-col text-3xl text-black">
+                            {tickets.length > 0 &&
+                                tickets.map(
+                                    (ticket) =>
+                                        ticket.event_id === event.event_id && (
+                                            <div key={ticket.ticket_id}>
+                                                {ticket.ticket_id}
+                                            </div>
+                                        )
+                                )}
+                        </div>
+                    </button>
+                ))}
+            </div>
         </section>
     )
 }
