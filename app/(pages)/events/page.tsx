@@ -1,10 +1,10 @@
 'use client'
 import Axios, { AxiosPrivate } from '@/app/api/axios'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-interface Event {
+export interface Event {
     event_id: string
     user_id: string | null
     event_name: string
@@ -18,7 +18,7 @@ const Events = () => {
     const [events, setEvents] = useState<Event[]>([])
 
     const router = useRouter()
-
+    const searchParams = useSearchParams()
     useEffect(() => {
         const fetchEvents = async () => {
             try {
@@ -31,6 +31,14 @@ const Events = () => {
 
         fetchEvents()
     }, [])
+    const createQueryString = useCallback(
+        (name: string, value: string) => {
+            const params = new URLSearchParams(searchParams.toString())
+            params.set(name, value)
+            return params.toString()
+        },
+        [searchParams]
+    )
 
     return (
         <section className="container mx-auto flex-col px-4">
@@ -45,7 +53,14 @@ const Events = () => {
                         <button
                             className="w-full"
                             onClick={() =>
-                                router.push(`/events/${event.event_id}`)
+                                router.push(
+                                    `/events/${event.event_id}` +
+                                        '?' +
+                                        createQueryString(
+                                            'event_name',
+                                            `${event.event_name}`
+                                        )
+                                )
                             }
                         >
                             <h2 className="mb-2 text-xl font-bold text-black">

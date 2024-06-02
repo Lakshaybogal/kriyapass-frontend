@@ -5,8 +5,8 @@ import useAuth from '@/app/hooks/useAuthContext'
 
 interface Ticket {
     ticket_type: string
-    price: number
-    availability: number
+    price: string
+    availability: string
 }
 
 interface Event {
@@ -68,8 +68,7 @@ const CreateEvent: React.FC = () => {
                     {
                         email: auth?.user?.email,
                         event_id: response.data.data.event_id,
-                        event_name: response.data.data.event_name,
-                        price: ticketData[i].price,
+                        event_name: response.data.data.event_name, // Ensure price is an integer
                         ...ticketData[i],
                     }
                 )
@@ -86,8 +85,8 @@ const CreateEvent: React.FC = () => {
             ...ticketData,
             {
                 ticket_type: '',
-                price: 0,
-                availability: 0,
+                price: '0',
+                availability: '0',
             },
         ])
     }
@@ -151,7 +150,7 @@ const CreateEvent: React.FC = () => {
                             className="mb-4 w-full rounded-md border px-4 py-2 focus:border-blue-500 focus:outline-none"
                         />
                         <input
-                            type="number"
+                            type="text"
                             name="price"
                             value={ticket.price}
                             onChange={(e) => handleTicketChange(index, e)}
@@ -159,7 +158,7 @@ const CreateEvent: React.FC = () => {
                             className="mb-4 w-full rounded-md border px-4 py-2 focus:border-blue-500 focus:outline-none"
                         />
                         <input
-                            type="number"
+                            type="text"
                             name="availability"
                             value={ticket.availability}
                             onChange={(e) => handleTicketChange(index, e)}

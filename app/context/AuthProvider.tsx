@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 
 interface User {
+    user_id: string
     username: string
     email: string
     first_name: string

@@ -14,7 +14,7 @@ const useRefresh = () => {
                 user: response.data.data,
                 access_token: response.data.access_token,
             }))
-            console.log('Refreshed token:')
+            console.log(response.data.data)
             return response.data
         } catch (error) {
             // Handle error
